@@ -5,6 +5,7 @@ import { ensureCliExists } from './cli-tool';
 
 
 function run() {
+
     try {
         ensureCliExists().then(() => {
             const command: string | undefined = tl.getInput('command', true);
@@ -27,6 +28,7 @@ function run() {
 
             if (cliCommand) {
                 executeCli(cliCommand);
+                console.log(`Structurizr CLI [${command}] executed`);
                 tl.setResult(tl.TaskResult.Succeeded, `Structurizr CLI [${command}] executed`);
             } else {
                 tl.setResult(tl.TaskResult.Failed, `Unknown command [${command}]`);
@@ -40,6 +42,9 @@ function run() {
 }
 
 function getRemoteCommand(command: string) {
+
+    console.log(`Executing Structurizr CLI -> ${command}`)
+
     const workspaceId: string | undefined = tl.getInput('workspaceid', true);
     const workspaceKey: string | undefined = tl.getInput('workspacekey', true);
     const workspaceSecret: string | undefined = tl.getInput('workspacesecret', true);
@@ -100,11 +105,7 @@ function executeCli(cliArgs: string) {
             tl.setResult(tl.TaskResult.Failed, `Structurizr CLI Error: ${error}\n---------\n${stdout}`);
             return;
         }
-        tl.debug(stdout);
+        console.log(stdout);
     });
 }
-
-
-
-
 run();

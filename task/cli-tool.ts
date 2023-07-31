@@ -11,9 +11,9 @@ export function ensureCliExists() {
         const destinationFile = path.join(__dirname, 'cli.zip');
         const destinationFolder = path.join(__dirname, 'cli');
 
-        tl.debug(`Checking for [${destinationFolder}]`);
+        console.log(`Checking for [${destinationFolder}]`);
         if (fs.existsSync(destinationFolder)) {
-            tl.debug(`CLI Exists, not downloading`);
+            console.log(`CLI Exists, not downloading`);
             resolve(destinationFolder);
             return;
         }
@@ -24,16 +24,16 @@ export function ensureCliExists() {
             }
             const json = JSON.parse(body.toString());
             const url = json.assets[0].browser_download_url;
-            tl.debug(`Latest CLI [${url}]`);
-            tl.debug('Downloading CLI');
+            console.log(`Latest CLI [${url}]`);
+            console.log('Downloading CLI');
 
             download(url, destinationFile)
                 .then(() => {
-                    tl.debug('File downloaded, unzipping');
+                    console.log('File downloaded, unzipping');
                     var zip = new admZip(destinationFile);
                     zip.extractAllTo(destinationFolder, true);
-                    tl.debug('File downloaded, unzipping...Done');
-                    tl.debug('Setting CLI executable');
+                    console.log('File downloaded, unzipping...Done');
+                    console.log('Setting CLI executable');
                     let command = `chmod +x ${path.join(__dirname, 'cli', 'structurizr.sh')}`;
                     exec(command, (error: Error, stdout: string, stderr: string) => {
                         if (stderr) {
@@ -44,7 +44,7 @@ export function ensureCliExists() {
                             tl.setResult(tl.TaskResult.Failed, `Error setting CLI executable: ${error}\n---------\n${stdout}`);
                             return;
                         }
-                        tl.debug(stdout);
+                        console.log(stdout);
                     });
                     resolve(destinationFolder);
                     return;
@@ -52,40 +52,6 @@ export function ensureCliExists() {
                 .catch(error => {
                     tl.error(error);
                 })
-
-            // const file = fs.createWriteStream(destinationFile);
-            // https.get(url, function (response: any) {
-            //     response.pipe(file);
-
-            //     // after download completed close filestream
-            //     file.on("finish", () => {
-            //         file.close(() => {
-            //             tl.debug('File downloaded, unzipping');
-            //             var zip = new admZip(destinationFile);
-            //             zip.extractAllTo(destinationFolder, true);
-            //             tl.debug('File downloaded, unzipping...Done');
-            //             tl.debug('Setting CLI executable');
-            //             let command = `chmod +x ${path.join(__dirname, 'cli', 'structurizr.sh')}`;
-            //             exec(command, (error: Error, stdout: string, stderr: string) => {
-            //                 if (stderr) {
-            //                     tl.setResult(tl.TaskResult.Failed, `Error setting CLI executable: ${stderr}\n---------\n${stdout}`);
-            //                     return;
-            //                 }
-            //                 if (error) {
-            //                     tl.setResult(tl.TaskResult.Failed, `Error setting CLI executable: ${error}\n---------\n${stdout}`);
-            //                     return;
-            //                 }
-            //                 tl.debug(stdout);
-            //             });
-            //             resolve(destinationFolder);
-            //             return;
-            //         });
-
-            //     });
-            // });
-
-
-
         });
     });
 }
