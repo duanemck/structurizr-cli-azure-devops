@@ -1,47 +1,61 @@
 import * as path from 'path';
 import * as assert from 'assert';
 import * as ttm from 'azure-pipelines-task-lib/mock-test';
+import { ensureCliExists } from '../cli-tool';
 
-describe('Sample task tests', function () {
+describe('CLI Execution Tests', function () {
 
-    // before( function() {
-
+    // it('should download the cli', function (done: Mocha.Done) {
+    //     this.timeout(60000);
+    //     ensureCliExists()
+    //         .then(() => done());
     // });
 
-    // after(() => {
+    it('should call the push CLI functionality', function(done: Mocha.Done) {
+        this.timeout(60000);
+        executeTask('push.js', done);   
+    });
 
+    // it('should call the pull CLI functionality', function(done: Mocha.Done) {
+    //     this.timeout(10000);
+    //     executeTask('pull.js', done);
     // });
 
-    it('should succeed with simple inputs', function(done: Mocha.Done) {
-        this.timeout(1000);
-    
-        let tp = path.join(__dirname, 'success.js');
-        let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
-    
-        tr.run();
-        console.log(tr.succeeded);
-        assert.equal(tr.succeeded, true, 'should have succeeded');
-        assert.equal(tr.warningIssues.length, 0, "should have no warnings");
-        assert.equal(tr.errorIssues.length, 0, "should have no errors");
-        console.log(tr.stdout);
-        assert.equal(tr.stdout.indexOf('Hello human') >= 0, true, "should display Hello human");
-        done();
-    });
+    // it('should call the lock CLI functionality', function(done: Mocha.Done) {
+    //     this.timeout(10000);
+    //     executeTask('lock.js', done);
+    // });
 
-    it('it should fail if tool returns 1', function(done: Mocha.Done) {
-        this.timeout(1000);
-    
-        let tp = path.join(__dirname, 'failure.js');
-        let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
-    
-        tr.run();
-        console.log(tr.succeeded);
-        assert.equal(tr.succeeded, false, 'should have failed');
-        assert.equal(tr.warningIssues.length, 0, "should have no warnings");
-        assert.equal(tr.errorIssues.length, 1, "should have 1 error issue");
-        assert.equal(tr.errorIssues[0], 'Bad input was given', 'error issue output');
-        assert.equal(tr.stdout.indexOf('Hello bad'), -1, "Should not display Hello bad");
-    
-        done();
-    });
+    // it('should call the unlock CLI functionality', function(done: Mocha.Done) {
+    //     this.timeout(10000);
+    //     executeTask('unlock.js', done);
+    // });
+
+    // it('should call the list CLI functionality', function(done: Mocha.Done) {
+    //     this.timeout(10000);
+    //     executeTask('list.js', done);
+    // });
+
+    // it('should call the validate CLI functionality', function(done: Mocha.Done) {
+    //     this.timeout(10000);
+    //     executeTask('validate.js', done);
+    // });
+
+    // it('should call the export CLI functionality', function(done: Mocha.Done) {
+    //     this.timeout(10000);
+    //     executeTask('export.js', done);
+    // });
+
 });
+
+function executeTask(taskTest: string, done: Mocha.Done) {
+    let tp = path.join(__dirname, taskTest);
+    let tr: ttm.MockTestRunner = new ttm.MockTestRunner(tp);
+    tr.run();
+    console.log(tr.stdout.replace(/%0A/g, '\n'));
+    console.log(`Result: ${tr.succeeded}`);
+    assert.equal(tr.succeeded, true, 'should have succeeded');
+    assert.equal(tr.warningIssues.length, 0, "should have no warnings");
+    assert.equal(tr.errorIssues.length, 0, "should have no errors");
+    done();
+}

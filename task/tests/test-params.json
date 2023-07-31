@@ -1,0 +1,6 @@
+{
+    "workspaceId" : 3,
+    "workspaceKey" : "188de4c2-a5d3-4439-96b7-14e75ede682d",
+    "workspaceSecret": "2c97e573-fba8-4899-877e-bd3f25d47fe8",
+    "serverUrl": "http://localhost:8080/api"
+}

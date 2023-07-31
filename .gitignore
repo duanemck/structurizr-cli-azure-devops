@@ -4,3 +4,5 @@ key
 .taskkey
 *.js
 *.js.log
+**/cli
+*.zip

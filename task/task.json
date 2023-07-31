@@ -15,13 +15,116 @@
     "instanceNameFormat": "Echo $(samplestring)",
     "inputs": [
         {
-            "name": "samplestring",
-            "type": "string",
-            "label": "Sample String",
+            "name": "command",
+            "type": "pickList",
+            "label": "Structurizr CLI Command",
             "defaultValue": "",
             "required": true,
-            "helpMarkDown": "A sample string"
+            "helpMarkDown": "Command to execute",
+            "options" : {
+                "push" : "push",
+                "pull" : "pull",
+                "lock" : "lock",
+                "unlock" : "unlock",
+                "export" : "export",
+                "validate" : "validate",
+                "list" : "list"
+            }
+        },
+        {
+            "name": "serverurl",
+            "type": "string",
+            "label": "Structurizr Server URL",
+            "defaultValue": "https://api.structurizr.com",
+            "required": false,
+            "helpMarkDown": "URL of the server is you're using self-hosted",
+            "visibleRule": "command = push || command = pull || command = lock || command = unlock"
+        },
+        {
+            "name": "workspaceid",
+            "type": "int",
+            "label": "Workspace ID",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "Unique ID of the workspace, find on workspace settings",
+            "visibleRule": "command = push || command = pull || command = lock || command = unlock"
+        },
+        {
+            "name": "workspacekey",
+            "type": "string",
+            "label": "Workspace Key",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "API Key of the workspace, find on workspace settings",
+            "visibleRule": "command = push || command = pull || command = lock || command = unlock"
+        },        
+        {
+            "name": "workspacesecret",
+            "type": "string",
+            "label": "Workspace Secret",
+            "defaultValue": "",
+            "required": true,
+            "helpMarkDown": "API Secret of the workspace, find on workspace settings",
+            "visibleRule": "command = push || command = pull || command = lock || command = unlock"
+        },        
+        {
+            "name": "workspacefile",
+            "type": "filePath",
+            "label": "Workspace File",
+            "defaultValue": "workspace.dsl",
+            "required": false,
+            "helpMarkDown": "Path to Structurizr JSON file/DSL file(s)",
+            "visibleRule": "command = push || command = lock || command = unlock || command = validate || command = list || command = export"
+        }, 
+        {
+            "name": "archive",
+            "type": "boolean",
+            "label": "Archive",
+            "defaultValue": false,
+            "required": false,
+            "helpMarkDown": "Stores the previous version of the remote workspace",
+            "visibleRule": "command = push"
+        }, 
+        {
+            "name": "merge",
+            "type": "boolean",
+            "label": "Merge",
+            "defaultValue": false,
+            "required": false,
+            "helpMarkDown": "Whether to merge layout information from the remote workspace",
+            "visibleRule": "command = push"
+        },      
+        {
+            "name": "format",
+            "type": "pickList",
+            "label": "Export Format",
+            "defaultValue": false,
+            "required": false,
+            "helpMarkDown": "Export Format",
+            "visibleRule": "command = export",
+            "options": {
+                "plantuml":"plantuml",
+                "plantuml-structurizr":"plantuml/structurizr",
+                "plantuml-c4plantuml":"plantuml/c4plantuml",
+                "websequencediagrams":"websequencediagrams",
+                "mermaid":"mermaid",
+                "dot":"dot",
+                "ilograph":"ilograph",
+                "json":"json",
+                "theme":"theme",
+                "fqcn":"fqcn"
+            }
+        }, 
+        {
+            "name": "output",
+            "type": "filePath",
+            "label": "Export output location",
+            "defaultValue": false,
+            "required": false,
+            "helpMarkDown": "Path to an output directory (optional)",
+            "visibleRule": "command = export"
         }
+        
     ],
     "execution": {
         "Node": {

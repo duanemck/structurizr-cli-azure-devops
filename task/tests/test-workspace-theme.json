@@ -1,0 +1,26 @@
+{
+  "name" : "ADO Extension Test Workspace",
+  "description" : "Description",
+  "elements" : [ {
+    "tag" : "Person",
+    "background" : "#00008b",
+    "color" : "#ffffff",
+    "shape" : "Person"
+  }, {
+    "tag" : "Software System",
+    "background" : "#00008b",
+    "color" : "#ffffff",
+    "shape" : "RoundedBox"
+  }, {
+    "tag" : "Container",
+    "background" : "#add8e6",
+    "color" : "#ffffff",
+    "shape" : "RoundedBox"
+  }, {
+    "tag" : "Database",
+    "shape" : "Cylinder"
+  }, {
+    "tag" : "ThirdParty",
+    "background" : "#a9a9a9"
+  } ]
+}
