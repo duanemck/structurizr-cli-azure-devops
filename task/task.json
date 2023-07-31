@@ -98,7 +98,7 @@
             "name": "format",
             "type": "pickList",
             "label": "Export Format",
-            "defaultValue": false,
+            "defaultValue": "plantuml",
             "required": false,
             "helpMarkDown": "Export Format",
             "visibleRule": "command = export",
@@ -119,7 +119,7 @@
             "name": "output",
             "type": "filePath",
             "label": "Export output location",
-            "defaultValue": false,
+            "defaultValue": "",
             "required": false,
             "helpMarkDown": "Path to an output directory (optional)",
             "visibleRule": "command = export"

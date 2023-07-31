@@ -16,35 +16,35 @@ describe('CLI Execution Tests', function () {
         executeTask('push.js', done);   
     });
 
-    // it('should call the pull CLI functionality', function(done: Mocha.Done) {
-    //     this.timeout(10000);
-    //     executeTask('pull.js', done);
-    // });
+    it('should call the pull CLI functionality', function(done: Mocha.Done) {
+        this.timeout(10000);
+        executeTask('pull.js', done);
+    });
 
-    // it('should call the lock CLI functionality', function(done: Mocha.Done) {
-    //     this.timeout(10000);
-    //     executeTask('lock.js', done);
-    // });
+    it('should call the lock CLI functionality', function(done: Mocha.Done) {
+        this.timeout(10000);
+        executeTask('lock.js', done);
+    });
 
-    // it('should call the unlock CLI functionality', function(done: Mocha.Done) {
-    //     this.timeout(10000);
-    //     executeTask('unlock.js', done);
-    // });
+    it('should call the unlock CLI functionality', function(done: Mocha.Done) {
+        this.timeout(10000);
+        executeTask('unlock.js', done);
+    });
 
-    // it('should call the list CLI functionality', function(done: Mocha.Done) {
-    //     this.timeout(10000);
-    //     executeTask('list.js', done);
-    // });
+    it('should call the list CLI functionality', function(done: Mocha.Done) {
+        this.timeout(10000);
+        executeTask('list.js', done);
+    });
 
-    // it('should call the validate CLI functionality', function(done: Mocha.Done) {
-    //     this.timeout(10000);
-    //     executeTask('validate.js', done);
-    // });
+    it('should call the validate CLI functionality', function(done: Mocha.Done) {
+        this.timeout(10000);
+        executeTask('validate.js', done);
+    });
 
-    // it('should call the export CLI functionality', function(done: Mocha.Done) {
-    //     this.timeout(10000);
-    //     executeTask('export.js', done);
-    // });
+    it('should call the export CLI functionality', function(done: Mocha.Done) {
+        this.timeout(10000);
+        executeTask('export.js', done);
+    });
 
 });
 

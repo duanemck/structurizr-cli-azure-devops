@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
+const https = require('follow-redirects').https;
 const exec = require('child_process').exec;
 import tl = require('azure-pipelines-task-lib/task');
 const fetch = require('fetch');
-const request = require('superagent');
 const admZip = require('adm-zip');
 
 export function ensureCliExists() {
@@ -18,7 +18,7 @@ export function ensureCliExists() {
             return;
         }
 
-        fetch.fetchUrl('https://api.github.com/repos/structurizr/cli/releases/latest', function (err: Error, meta: any, body: any) {
+        fetch.fetchUrl('https://api.github.com/repos/structurizr/cli/releases/latest', async function (err: Error, meta: any, body: any) {
             if (err) {
                 throw err;
             }
@@ -26,15 +26,11 @@ export function ensureCliExists() {
             const url = json.assets[0].browser_download_url;
             tl.debug(`Latest CLI [${url}]`);
             tl.debug('Downloading CLI');
-            request
-                .get(url)
-                .on('error', function (error: Error) {
-                    reject(error.message);
-                })
-                .pipe(fs.createWriteStream(destinationFile))
-                .on('finish', function () {
-                    var zip = new admZip(destinationFile);
+
+            download(url, destinationFile)
+                .then(() => {
                     tl.debug('File downloaded, unzipping');
+                    var zip = new admZip(destinationFile);
                     zip.extractAllTo(destinationFolder, true);
                     tl.debug('File downloaded, unzipping...Done');
                     tl.debug('Setting CLI executable');
@@ -52,52 +48,88 @@ export function ensureCliExists() {
                     });
                     resolve(destinationFolder);
                     return;
-                });
+                })
+                .catch(error => {
+                    tl.error(error);
+                })
+
+            // const file = fs.createWriteStream(destinationFile);
+            // https.get(url, function (response: any) {
+            //     response.pipe(file);
+
+            //     // after download completed close filestream
+            //     file.on("finish", () => {
+            //         file.close(() => {
+            //             tl.debug('File downloaded, unzipping');
+            //             var zip = new admZip(destinationFile);
+            //             zip.extractAllTo(destinationFolder, true);
+            //             tl.debug('File downloaded, unzipping...Done');
+            //             tl.debug('Setting CLI executable');
+            //             let command = `chmod +x ${path.join(__dirname, 'cli', 'structurizr.sh')}`;
+            //             exec(command, (error: Error, stdout: string, stderr: string) => {
+            //                 if (stderr) {
+            //                     tl.setResult(tl.TaskResult.Failed, `Error setting CLI executable: ${stderr}\n---------\n${stdout}`);
+            //                     return;
+            //                 }
+            //                 if (error) {
+            //                     tl.setResult(tl.TaskResult.Failed, `Error setting CLI executable: ${error}\n---------\n${stdout}`);
+            //                     return;
+            //                 }
+            //                 tl.debug(stdout);
+            //             });
+            //             resolve(destinationFolder);
+            //             return;
+            //         });
+
+            //     });
+            // });
+
+
 
         });
     });
 }
 
+function download(url: string, dest: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+        if (fs.existsSync(dest)){
+            fs.unlinkSync(dest);
+        }
+        
+        const file = fs.createWriteStream(dest, { flags: "wx" });
 
+        const request = https.get(url, (response: any) => {
+            if (response.statusCode === 302) {
+                response.headers
+            }
+            if (response.statusCode < 400) {
+                response.pipe(file);
+            } else {
+                file.close();
+                fs.unlink(dest, () => { }); // Delete temp file
+                reject(`Server responded with ${response.statusCode}: ${response.statusMessage}`);
+            }
+        });
 
-//     return new Promise(async (resolve, reject) => {
-//         if (!fs.existsSync(cliFolder)) {
-//             tl.debug('Downloading structurizr CLI');
-//             downloadAndUnzip(await getLatestCliUrl());            
-//         } else {
-//             resolve(null);
-//         }
-//     });
-// }
+        request.on("error", (err: Error) => {
+            file.close();
+            fs.unlink(dest, () => { }); // Delete temp file
+            reject(err.message);
+        });
 
-// function downloadAndUnzip(fileUrl: string) {
-//     const destinationFile = path.join(__dirname, 'cli.zip');
-//     const destinationFolder = path.join(__dirname, 'cli');
-//     request
-//         .get(fileUrl)
-//         .on('error', function (error: Error) {
-//             tl.error(error.message);
-//         })
-//         .pipe(fs.createWriteStream(destinationFile))
-//         .on('finish', function () {
-//             var zip = new admZip(destinationFile);
-//             console.log('start unzip');
-//             zip.extractAllTo(destinationFolder, true);
-//         });
-// }
+        file.on("finish", () => {
+            resolve();
+        });
 
-// function getLatestCliUrl(): Promise<string> {
-//     return new Promise((resolve, reject) => {
-//         fetch.fetchUrl('https://api.github.com/repos/structurizr/cli/releases/latest', function (err: Error, meta: any, body: any) {
-//             if (err) {
-//                 return reject(err);
-//             }
-//             console.log(body);
-//             const json = JSON.parse(body.toString());
-//             const url = json.assets[0].browser_download_url;
-//             tl.debug(`Latest CLI [${url}]`);
-//             resolve(url);
+        file.on("error", (err: any) => {
+            file.close();
 
-//         });
-//     });
-// }
+            if (err.code === "EEXIST") {
+                reject("File already exists");
+            } else {
+                fs.unlink(dest, () => { }); // Delete temp file
+                reject(err.message);
+            }
+        });
+    });
+}
