@@ -2,7 +2,7 @@
     "manifestVersion": 1,
     "id": "structurizr-build-release-task",
     "name": "Structurizr CLI",
-    "version": "0.2.5",
+    "version": "0.2.6",
     "publisher": "duanemckibbin",
     "targets": [
         {
