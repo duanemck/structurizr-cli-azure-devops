@@ -3,7 +3,6 @@ import * as path from 'path';
 const exec = require('child_process').exec;
 import { ensureCliExists } from './cli-tool';
 
-
 function run() {
 
     try {

@@ -72,14 +72,14 @@ function download(url: string, dest: string): Promise<void> {
                 response.pipe(file);
             } else {
                 file.close();
-                fs.unlink(dest, () => { }); // Delete temp file
+                fs.unlink(dest, () => { }); 
                 reject(`Server responded with ${response.statusCode}: ${response.statusMessage}`);
             }
         });
 
         request.on("error", (err: Error) => {
             file.close();
-            fs.unlink(dest, () => { }); // Delete temp file
+            fs.unlink(dest, () => { }); 
             reject(err.message);
         });
 
@@ -93,7 +93,7 @@ function download(url: string, dest: string): Promise<void> {
             if (err.code === "EEXIST") {
                 reject("File already exists");
             } else {
-                fs.unlink(dest, () => { }); // Delete temp file
+                fs.unlink(dest, () => { }); 
                 reject(err.message);
             }
         });
